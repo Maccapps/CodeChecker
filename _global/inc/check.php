@@ -21,19 +21,15 @@ if ($filetype === 'js') {
     $projectReportDir = '../'.$codeCheck->reportsJsonFile . str_replace('.json', '', $project['file']);
 }
 
-
-#echo '<pre>' . var_export($issues, TRUE) . '</pre>';die('<pre>Exit at Line '.__LINE__.' of <span title="'.__FILE__.'">'.str_replace(array(__DIR__, '\\'), '', __FILE__).'</span> @ '.date('H:i:s'));
 $issues['counts']['errors'] = count($issues['items']['errors']);
 $issues['counts']['warnings'] = count($issues['items']['warnings']);
 $issues['counts']['security'] = count($issues['items']['security']);
 
-#echo '<pre>' . var_export($_SESSION, TRUE) . '</pre>';die('<pre>Exit at Line '.__LINE__.' of <span title="'.__FILE__.'">'.str_replace(array(__DIR__, '\\'), '', __FILE__).'</span> @ '.date('H:i:s'));
-
 if (!is_dir($projectReportDir)) {
     mkdir($projectReportDir);
 }
-$reportFile = $projectReportDir . '/' . md5($_SESSION['current']['file']) . '.json';
-
+$hashfilename = str_replace($project['base'].'\\', '', $_SESSION['current']['folder'].'\\'.$_SESSION['current']['file']);
+$reportFile = $projectReportDir . '/' . md5($hashfilename) . '.json';
 $fp = fopen($reportFile, 'w');
 
 $dd['hash'] = $contentsHash = md5(file_get_contents($file));

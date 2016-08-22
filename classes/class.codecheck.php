@@ -204,7 +204,8 @@ class CodeCheck
             if ($item['type'] == 'file' AND in_array($item['extension'], $this->cfg['extensions'])) {
                 $filepath = $folder.DIRECTORY_SEPARATOR.$item['name'];
                 $contentsHash = md5(file_get_contents($filepath));
-                $reportsFile = CWD.'/'.$this->reportsJsonFile . str_replace('.json', '', $project['file']).'/'.md5($item['name']).'.json';
+                $hashfilename = str_replace($project['base'].'\\', '', $filepath);
+                $reportsFile = CWD.'/'.$this->reportsJsonFile . str_replace('.json', '', $project['file']).'/'.md5($hashfilename).'.json';
                 $markerClasses = array();
                 $type = 'errors found';
                 if (!file_exists($reportsFile)) {
