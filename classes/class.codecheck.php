@@ -419,17 +419,38 @@ class CodeCheck
 
     }
 
-    function formatJsLintResults($results)
+    function formatJsLintResults($results, $file)
     {
-$results = $results === null ? [] : $results;
-        #echo '<pre>' . var_export($results, TRUE) . '</pre>';
+        $_SESSION['ignoreStart'] = null;
+        $ignoreLines = array();
+
+        $lines = file($file);
+        foreach ($lines as $line_num => $line) {
+            if (strpos(strtolower($line), '//  ccignoreline') > -1) {
+                $ignoreLines[] = $line_num + 1;
+            }
+            if (strpos(strtolower($line), '//  ccignorestart') > -1) {
+                $_SESSION['ignoreStart'] = $line_num + 1;
+            }
+            if ($_SESSION['ignoreStart'] !== null AND (strpos(strtolower($line), '//  ccignoreend') > -1 OR $line_num == count($lines) - 1)) {
+                for($lin = $_SESSION['ignoreStart']; $lin <= $line_num; $lin++) {
+                    $ignoreLines[] = $lin;
+                }
+                $_SESSION['ignoreStart'] = null;
+            }
+        }
+
+        $results = $results === null ? [] : $results;
         $errors = array();
         foreach($results as $result) {
             $error['line'] = $result['line'];
             $error['char'] = $result['col'];
             $error['issue'] = $result['reason'];
-            $errors[] = $error;
+            if (!in_array($error['line'], $ignoreLines)) {
+                $errors[] = $error;
+            }
         }
+
         return $errors;
     }
 

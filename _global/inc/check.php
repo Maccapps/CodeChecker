@@ -11,7 +11,7 @@ if ($filetype === 'js') {
         $issues['items']['errors'] = $codeCheck->sniffer->getFormattedResults($file, $project['type'], $filetype);
         die();
     } else {
-        $issues['items']['errors'] = $codeCheck->formatJsLintResults($_SESSION['jslint']);
+        $issues['items']['errors'] = $codeCheck->formatJsLintResults($_SESSION['jslint'], $file);
         $_SESSION['jslintdone'] = false;
     }
     $projectReportDir = $codeCheck->reportsJsonFile . str_replace('.json', '', $project['file']);
