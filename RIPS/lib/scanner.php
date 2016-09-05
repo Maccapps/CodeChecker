@@ -1928,7 +1928,7 @@ class Scanner
 													{
 														$block->vuln = true;
 														increaseVulnCounter($block->sink);
-                                                        require_once 'dm.php';
+                                                        #require_once 'dm.php';
                                                         addVuln(getVulnNodeTitle($block->sink), str_replace('\\', '/', str_replace($_SESSION['root'], '', $this->file_name)));
 													}	
 													

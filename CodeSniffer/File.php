@@ -381,6 +381,7 @@ class PHP_CodeSniffer_File
 
         $foundCode = false;
         $ignoring  = false;
+        $_SESSION['ignoreStart'] = null;
 
         // Foreach of the listeners that have registered to listen for this
         // token, get them to process it.
@@ -401,6 +402,25 @@ class PHP_CodeSniffer_File
                     $this->_warningCount = 0;
                     return;
                 }
+            }
+
+            /*
+                CodeChecker ignores
+                //  ccignoreline - this ignores current line
+                //  ccignorestart - this ignores current onwards until a matching end is found or last token reached
+                //  ccignoreend - signifies end of ignore started by ccignorestart
+            */
+            if (strtolower(substr($token['content'], 0, 16)) === '//  ccignoreline') {
+                $this->_ignoredLines[$token['line']] = true;
+            }
+            if (strtolower(substr($token['content'], 0, 17)) === '//  ccignorestart') {
+                $_SESSION['ignoreStart'] = $token['line'];
+            }
+            if ($_SESSION['ignoreStart'] !== null AND (strtolower(substr($token['content'], 0, 15)) === '//  ccignoreend' OR $stackPtr == count($this->_tokens) - 1)) {
+                for($line = $_SESSION['ignoreStart']; $line <= $token['line']; $line++) {
+                    $this->_ignoredLines[$line] = true;
+                }
+                $_SESSION['ignoreStart'] = null;
             }
 
             if ($ignoring === true) {
