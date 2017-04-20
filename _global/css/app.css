@@ -65,6 +65,7 @@ h1 span { font-size: 15px; margin: 0 0 10px; font-weight: 400; color: #333; }
 
 #table-holder-explorer { margin-right: 10px; width:443px; }
 #table-holder-results {  width:507px; }
+#table-holder-history {  width:507px; }
 
 .table-current-path { font-size: 85%; padding:3px 5px; font-weight:bold; }
 .table-current-path a { font-weight:bold; }
@@ -89,6 +90,7 @@ td.icon--folder { background:url('../img/icon-folder.png') 6px 2px  no-repeat; }
 #table-holder-explorer .col-file { width: 334px; margin-right: 2px; }
 #table-holder-explorer .col-directory { width: 392px; margin-right: 2px; }
 #table-holder-results .col-file { width: 334px; margin-right: 2px; }
+#table-holder-history .col-file { width: 1060px; margin-right: 2px; }
 .marker { background: #bbb; width: 24px; height: 24px; margin: 2px auto; line-height: 24px; font-size: 80%; }
 .marker.good { background:#090; }
 .col-errors, .col-warnings, .col-security { text-align:center; width:22px; padding: 0 !important; height: 24px; margin: 0 1px;}
@@ -140,6 +142,7 @@ ul.tabs li.active { background:#f0d;float: left; padding: 5px 10px; border-botto
     #table-holder-explorer { width:486px; margin-right: 10px; }
     #table-holder-explorer .col-file { width:340px; }
     #table-holder-results { width:800px; }
+    #table-holder-history { width:800px; }
     .table-holder { min-height:505px; }
     .main-content {  min-height: 580px; }
     .col-issue { width:726px; }
@@ -157,6 +160,7 @@ ul.tabs li.active { background:#f0d;float: left; padding: 5px 10px; border-botto
     #table-holder-explorer { width:515px; margin-right: 10px; }
     #table-holder-explorer .col-file { width: 369px; }
     #table-holder-results { width:841px; }
+    #table-holder-history { width:841px; }
     .col-issue { width: 767px; }
 }
 
@@ -170,5 +174,6 @@ ul.tabs li.active { background:#f0d;float: left; padding: 5px 10px; border-botto
     #table-holder-explorer { width:635px; margin-right: 10px; }
     #table-holder-explorer .col-file { width: 515px; }
     #table-holder-results { width:1184px; }
+    #table-holder-history { width:1184px; }
     .col-issue { width: 1110px; }
 }

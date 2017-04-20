@@ -135,6 +135,15 @@ class CodeCheck
                 header("location: /");
                 break;
 
+            case 'history':
+                $parts = explode('___', $_GET['val']);
+                $_SESSION['current']['file'] = $parts[1];
+                $_SESSION['current']['action'] = 'check';
+                $_SESSION['current']['folder'] = $parts[0];
+                $_SESSION['current']['parent'] = $this->fileServer->getParentFolder($parts[0]);
+                header("location: /");
+                break;
+
             case 'project':
                 $_SESSION['current']['project'] = $_GET['val'];
                 $_SESSION['current']['folder'] = null;
@@ -452,6 +461,103 @@ class CodeCheck
         }
 
         return $errors;
+    }
+
+    function getHistoryContents($folder, $project)
+    {
+        $projectReportDir = $this->reportsJsonFile . str_replace('.json', '', $project['file']);
+        $historyFile = $projectReportDir . '/_history.json';
+
+        if (file_exists($historyFile)) {
+            $history = json_decode(file_get_contents($historyFile), true);
+        } else {
+            $history = array();
+        }
+        return $history;
+
+    }
+
+    function outputHistoryContents($folder, $project, $contents)
+    {
+        $base = $this->cfg['projects'][$_SESSION['current']['project']]['base'];
+
+        if (count($contents) < 1) {
+            return false;
+        }
+        echo '<table cellspacing="0" width="100%" >' . "\n";
+        echo '<tr class="header">';
+        echo '<td style="width:22px !important;">&nbsp;</td>';
+        echo '<td class="col right-divider">Filename</td>';
+        echo '<td class="col-hash right-divider" style="width:62px !important;">Hash</td>';
+        echo '<td class="col-errors right-divider" style="width:18px !important;">E</td>';
+        echo '<td class="col-warnings right-divider" style="width:18px !important;">W</td>';
+        echo '<td class="col-security" style="width:18px !important;">S</td>';
+        echo '</tr>' . "\n";
+        echo '<p> &nbsp; </p>' . "\n";
+        $rows = 0;
+        //  output folders
+        foreach ($contents as $hashfilename => $item) {
+
+            if (substr($item['folder'], 0, strlen($folder)) !== $folder) {
+                continue;
+            }
+
+            $filepath = $item['folder'] . '\\' . $item['file'];
+            $contentsHash = md5(file_get_contents($filepath));
+            #$hashfilename = str_replace($project['base'].'\\', '', $filepath);
+            $reportsFile = CWD.'/'.$this->reportsJsonFile . str_replace('.json', '', $project['file']).'/'.$hashfilename.'.json';
+
+            $type = 'errors found';
+     
+            $report = json_decode(file_get_contents($reportsFile), true);
+            if ($report['hash'] !== $contentsHash) {
+                $type = 'out of date';
+            } else {
+                if ($report['errors'] == 0 AND $report['warnings'] == 0 AND $report['security'] == 0) {
+                    $type = 'all good';
+                }
+                $markerClasses['errors'] = $report['errors'] > 0 ? 'bad' : 'good';
+                $markerClasses['warnings'] = $report['warnings'] > 0 ? 'bad' : 'good';
+                $markerClasses['security'] = $report['security'] > 0 ? 'bad' : 'good';
+                $markerCounts['errors'] = $report['errors'] > 9 ? '>' : $report['errors'];
+                $markerCounts['warnings'] = $report['warnings'] > 9 ? '>' : $report['warnings'];
+                $markerCounts['security'] = $report['security'] > 9 ? '>' : $report['security'];
+                $markerCounts['errors'] = $report['errors'] == 0 ? '&nbsp;' : $markerCounts['errors'];
+                $markerCounts['warnings'] = $report['warnings'] == 0 ? '&nbsp;' : $markerCounts['warnings'];
+                $markerCounts['security'] = $report['security'] == 0 ? '&nbsp;' : $markerCounts['security'];
+            }
+
+
+            $classes = array('active');
+            // if ($item['file'] === $_SESSION['current']['file']) {
+                // $classes[] = 'active';
+            // }
+            echo '<tr class="'.implode(' ', $classes).'">';
+            echo '<td class="icon icon--file"></td>';
+            echo '<td class="col-file"><a href="?key=history&val='.$item['folder'].'___'.$item['file'].'" title="'.$reportsFile.'">'.str_replace('\\', ' \\ ', str_replace($base, '', $item['folder'])). ' \ ' . $item['file'] . '</a></td>';
+            switch($type) {
+                case 'all good':
+                    echo '<td colspan="3" class="cols-all-good"><span>all good</span></td>';
+                    break;
+                case 'not checked':
+                    echo '<td colspan="3" class="cols-not-checked"><span>not checked</span></td>';
+                    break;
+                case 'out of date':
+                    echo '<td colspan="3" class="cols-out-of-date"><span>out of date</span></td>';
+                    break;
+                case 'errors found':
+                    echo '<td class="col-errors"><div class="marker '.$markerClasses['errors'].'" title="'.$report['errors'].'">'.$markerCounts['errors'].'</div></td>';
+                    echo '<td class="col-warnings"><div class="marker '.$markerClasses['warnings'].'" title="'.$report['warnings'].'">'.$markerCounts['warnings'].'</div></td>';
+                    echo '<td class="col-security"><div class="marker '.$markerClasses['security'].'" title="'.$report['security'].'">'.$markerCounts['security'].'</div></td>';
+                    break;
+            }
+
+            echo '</tr>' . "\n";
+            $rows++;
+
+        }
+        echo '</table>' . "\n";
+
     }
 
 }

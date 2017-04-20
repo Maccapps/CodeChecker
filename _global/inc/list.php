@@ -28,4 +28,10 @@ $parent = $_SESSION['current']['parent'];
         <?php $codeCheck->outputFolderContents($folder, $project, $contents); ?>
     </div>
 
+    <div id="table-holder-history" class="table-holder">
+        <p class="table-current-path">Recent checks (within current folder)</p>
+        <?php $contents = $codeCheck->getHistoryContents($folder, $project); ?>
+        <?php $codeCheck->outputHistoryContents($folder, $project, $contents); ?>
+    </div>
+
 </div>

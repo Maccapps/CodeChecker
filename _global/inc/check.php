@@ -39,6 +39,35 @@ $dd['security'] = $issues['counts']['security'];
 fwrite($fp, json_encode($dd, true));
 fclose($fp);
 
+$historyFile = $projectReportDir . '/_history.json';
+
+if (file_exists($historyFile)) {
+    $history = json_decode(file_get_contents($historyFile), true);
+    unset($history[md5($hashfilename)]);
+} else {
+    $history = array();
+}
+
+
+
+$history[md5($hashfilename)] = $dd;
+$history[md5($hashfilename)]['folder'] = $folder;
+$history[md5($hashfilename)]['file'] = $_SESSION['current']['file'];
+$history[md5($hashfilename)]['hash'] = $dd['hash'];
+unset($history[md5($hashfilename)]['hash']);
+$history[md5($hashfilename)]['dt'] = date('U');
+
+$historyLength = 20;
+
+$history = $codeCheck->fileServer->arraySortByField($history, 'dt', 'a', true);
+if (count($history) > $historyLength) {
+    $history = array_slice($history, count($history) - $historyLength);
+}
+$history = $codeCheck->fileServer->arraySortByField($history, 'dt', 'd', true);
+
+$fp = fopen($historyFile, 'w');
+fwrite($fp, json_encode($history, true));
+
 ?>
     <title><?php echo $_SESSION['current']['file']; ?> | <?php echo $project['name']; ?> | CodeChecker</title>
 </head>
