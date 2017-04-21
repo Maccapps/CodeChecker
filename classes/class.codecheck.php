@@ -534,7 +534,8 @@ class CodeCheck
             // }
             echo '<tr class="'.implode(' ', $classes).'">';
             echo '<td class="icon icon--file"></td>';
-            echo '<td class="col-file"><a href="?key=history&val='.$item['folder'].'___'.$item['file'].'" title="'.$reportsFile.'">'.str_replace('\\', ' \\ ', str_replace($base, '', $item['folder'])). ' \ ' . $item['file'] . '</a></td>';
+            $filename = str_replace('\\', '<span class="screen-l"> </span>\\<span class="screen-l"> </span>', str_replace($base, '', $item['folder'])). ' \ ' . $item['file'];
+            echo '<td class="col-file"><a href="?key=history&val='.$item['folder'].'___'.$item['file'].'" title="'.$reportsFile.'">'. $filename . '</a></td>';
             switch($type) {
                 case 'all good':
                     echo '<td colspan="3" class="cols-all-good"><span>all good</span></td>';
