@@ -57,7 +57,7 @@ $history[md5($hashfilename)]['hash'] = $dd['hash'];
 unset($history[md5($hashfilename)]['hash']);
 $history[md5($hashfilename)]['dt'] = date('U');
 
-$historyLength = 20;
+$historyLength = 30;
 
 $history = $codeCheck->fileServer->arraySortByField($history, 'dt', 'a', true);
 if (count($history) > $historyLength) {
