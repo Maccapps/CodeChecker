@@ -503,6 +503,11 @@ class CodeCheck
             }
 
             $filepath = $item['folder'] . '\\' . $item['file'];
+
+            if (!file_exists($filepath)) {
+                continue;
+            }
+
             $contentsHash = md5(file_get_contents($filepath));
             #$hashfilename = str_replace($project['base'].'\\', '', $filepath);
             $reportsFile = CWD.'/'.$this->reportsJsonFile . str_replace('.json', '', $project['file']).'/'.$hashfilename.'.json';
